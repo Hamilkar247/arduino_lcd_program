@@ -16,6 +16,14 @@
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 
+#define CERNY   0x0000
+#define MODRY   0x001F
+#define CERVENY 0xF800
+#define ZELENY  0x07E0
+#define KYAN    0x07FF
+#define MAGENTA 0xF81F
+#define ZLUTY   0xFFE0
+#define BILY    0xFFFF
 
 namespace
 {
@@ -39,6 +47,7 @@ namespace
 	unsigned long testFilledTriangles();
 	unsigned long testRoundRects();
 	unsigned long testFilledRoundRects();
+  unsigned long testNizozemskoVlajka();
 
 	uint16_t color565(uint8_t r, uint8_t g, uint8_t b)
 	{
@@ -80,6 +89,8 @@ namespace
 		RUNTEST(10, "Rounded rects (outline)  ", testRoundRects());
 		yield();
 		RUNTEST(11, "Rounded rects (filled)   ", testFilledRoundRects());
+    yield();
+    RUNTEST(12, "Nizozemska vlajka        ", testNizozemskoVlajka());
 
 		tft.fillScreen(BLACK);
 		tft.setTextColor(GREEN);
@@ -410,6 +421,29 @@ namespace
 			tft.fillRoundRect(cx - i2, cy - i2, i, i, i / 8, color565(0, green, 0));
 			yield();
 		}
+
+    return micros() - start;
+  }
+  
+  unsigned long testNizozemskoVlajka()
+  {
+    Serial.println(F("Test NizozemskoVlajka\n"));
+    unsigned long start;
+    int           i, i2, cerveny, step,
+      cx = tft.width() / 2 - 1,
+      cy = tft.height() / 2 - 1;
+
+    tft.fillScreen(MODRY);
+    start = micros();  //co to je?
+    cerveny = 256;
+    step = (256 * 6) / min(tft.width(), tft.height());
+    for (i = min(tft.width(), tft.height()); i > 20; i -= 6)
+    {
+      i2 = i / 2;
+      cerveny -= step;
+      tft.fillRoundRect(cx - i2, cy - i2, i, i, i / 8, color565(0, cerveny, 0));
+      yield();
+    }
 
 		return micros() - start;
 	}
